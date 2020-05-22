@@ -1,7 +1,7 @@
 # NOTE: update this with your service name
 service: next-js-auth
 
-# Create an optimized package for our functions 
+# Create an optimized package for our functions
 package:
   individually: true
 
@@ -14,7 +14,7 @@ provider:
   name: aws
   runtime: nodejs10.x
   stage: dev
-  region: us-east-1
+  region: ap-southeast-2
   # To load environment variables externally
   # rename env.example to .env and uncomment
   # the following line. Also, make sure to not
@@ -24,6 +24,20 @@ provider:
   #  SAMPLE_ENV_VAR: ${env:SAMPLE_ENV_VAR}
 
 functions:
+  register:
+    handler: handler.register
+    events:
+      - http:
+          path: register
+          methos: post
+          cors: true
+  login:
+    handler: handler.login
+    events:
+      - http:
+          path: login
+          method: post
+          cors: true
   hello:
     handler: handler.hello
     events:

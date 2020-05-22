@@ -22,13 +22,15 @@ provider:
   #
   #environment:
   #  SAMPLE_ENV_VAR: ${env:SAMPLE_ENV_VAR}
-custom:
-  serverless-offline:
-    port: 8000
 
 environment:
   AWS_KEY: ${env:AWS_KEY}
   AWS_SECRET: ${env:AWS_SECRET}
+  AWS_POOLID: ${env:AWS_POOLID}
+
+custom:
+  serverless-offline:
+    port: 8000
 
 functions:
   register:
@@ -36,8 +38,9 @@ functions:
     events:
       - http:
           path: register
-          methos: post
+          method: post
           cors: true
+
   login:
     handler: handler.login
     events:

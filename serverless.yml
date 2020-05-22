@@ -27,6 +27,7 @@ environment:
   AWS_KEY: ${env:AWS_KEY}
   AWS_SECRET: ${env:AWS_SECRET}
   AWS_POOLID: ${env:AWS_POOLID}
+  AWS_CLIENT_ID: ${env:AWS_CLIENT_ID}
 
 custom:
   serverless-offline:

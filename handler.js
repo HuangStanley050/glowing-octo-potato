@@ -19,6 +19,10 @@ const utilPromiseSetPassword = util
   .promisify(COGNITO_CLIENT.adminSetUserPassword)
   .bind(COGNITO_CLIENT);
 
+const utilPromiseInitAuth = util
+  .promisify(COGNITO_CLIENT.initiateAuth)
+  .bind(COGNITO_CLIENT);
+
 export const register = async (event, ctx) => {
   const data = JSON.parse(event.body);
   const { email, password } = data;
@@ -51,8 +55,24 @@ export const register = async (event, ctx) => {
   };
 };
 export const login = async (event, ctx) => {
+  const data = JSON.parse(event.body);
+  const { email, password } = data;
+  const userAuthParams = {
+    ClientId: process.env.AWS_CLIENT_ID,
+    AuthFlow: "USER_PASSWORD_AUTH",
+    AnalyticsMetadata: {
+      AnalyticsEndpointId: "STRING_VALUE",
+    },
+    AuthParameters: {
+      USERNAME: email,
+      PASSWORD: password,
+    },
+  };
+  let response = await utilPromiseInitAuth(userAuthParams);
+  const token = response.AuthenticationResult.AccessToken;
+  //console.log(response);
   return {
     statusCode: 200,
-    body: "hello",
+    body: JSON.stringify({ token }),
   };
 };

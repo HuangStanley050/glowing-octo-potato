@@ -1,5 +1,10 @@
 import AWS from "aws-sdk";
 import util from "util";
+import jwt from "jsonwebtoken";
+import axios from "axios";
+import jwkToPem from "jwk-to-pem";
+
+const { promisify } = util;
 
 AWS.config.update({
   accessKeyId: process.env.AWS_ACC_KEY_ID,
@@ -11,13 +16,13 @@ const COGNITO_CLIENT = new AWS.CognitoIdentityServiceProvider({
   region: "ap-southeast-2",
 });
 
-const utilPromiseRegisterUser = util
-  .promisify(COGNITO_CLIENT.adminCreateUser)
-  .bind(COGNITO_CLIENT);
+const utilPromiseRegisterUser = promisify(COGNITO_CLIENT.adminCreateUser).bind(
+  COGNITO_CLIENT
+);
 
-const utilPromiseSetPassword = util
-  .promisify(COGNITO_CLIENT.adminSetUserPassword)
-  .bind(COGNITO_CLIENT);
+const utilPromiseSetPassword = promisify(
+  COGNITO_CLIENT.adminSetUserPassword
+).bind(COGNITO_CLIENT);
 
 const utilPromiseInitAuth = util
   .promisify(COGNITO_CLIENT.initiateAuth)
@@ -76,3 +81,5 @@ export const login = async (event, ctx) => {
     body: JSON.stringify({ token }),
   };
 };
+
+export const logout = async (event, context) => {};

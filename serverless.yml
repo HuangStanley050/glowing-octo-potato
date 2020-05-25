@@ -34,6 +34,13 @@ custom:
     port: 8000
 
 functions:
+  logout:
+    handler: handler.logout
+    events:
+      - http:
+          path: logout
+          method: post
+          cors: true
   register:
     handler: handler.register
     events:

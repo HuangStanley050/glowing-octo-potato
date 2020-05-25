@@ -28,6 +28,10 @@ const utilPromiseInitAuth = util
   .promisify(COGNITO_CLIENT.initiateAuth)
   .bind(COGNITO_CLIENT);
 
+const utilPromiseAdminLogout = promisify(
+  COGNITO_CLIENT.adminUserGlobalSignOut
+).bind(COGNITO_CLIENT);
+
 export const register = async (event, ctx) => {
   const data = JSON.parse(event.body);
   const { email, password } = data;
@@ -82,4 +86,24 @@ export const login = async (event, ctx) => {
   };
 };
 
-export const logout = async (event, context) => {};
+export const logout = async (event, context) => {
+  const data = JSON.parse(event.body);
+  //console.log(data);
+  const { token } = data;
+
+  let result = await axios.get(
+    `https://cognito-idp.${process.env.AWS_REGION_JWK}.amazonaws.com/${process.env.AWS_POOLID}/.well-known/jwks.json`
+  );
+  const pem = jwkToPem(result.data.keys[1]);
+  const decoded = jwt.verify(token, pem, { algorithm: ["RS256"] });
+  const userParams = {
+    UserPoolId: process.env.AWS_POOLID /* required */,
+    Username: decoded.username,
+  };
+  //console.log(decoded);
+  await utilPromiseAdminLogout(userParams);
+  return {
+    statusCode: 200,
+    body: "all good",
+  };
+};
